@@ -2,12 +2,17 @@
 <html>
 <head>
   <title>Home</title>
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      window.location.href = "/login.html";
+    }
+  </script>
 </head>
 <body>
   <h1>Welcome</h1>
 
-  <a href="/login.html">Login</a>
-  <br>
-  <a href="/register.html">Register</a>
+  <a href="/create_account.html">create Account</a>
 </body>
 </html>

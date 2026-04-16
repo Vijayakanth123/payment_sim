@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Account</title>
+  <script>
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please login first");
+      window.location.href = "/login.html";
+    }
+  </script>
+</head>
+<body>
+
+  <h2>Create Account</h2> 
+  <label>Bank Name:</label>
+  <input type="text" id="bank" name="bank_name" required />
+  <br><br>
+
+  <label>Passcode:</label>
+  <input type="password" id="passcode" name="passcode" required />
+  <br><br>
+
+  <button type="submit" onclick="createAccount()">Create Account</button>
+
+  <script>
+    async function createAccount() {
+      const token = localStorage.getItem("token");
+      const bank_name = document.getElementById("bank").value;
+      const passcode = document.getElementById("passcode").value;
+
+      const res = await fetch("/api/accounts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ bank_name, passcode })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Account created!");
+      } else {
+        alert(data.error);
+      }
+    }
+  </script>
+
+</body>
+</html>

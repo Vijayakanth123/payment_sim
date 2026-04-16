@@ -6,6 +6,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth.routes"); // import auth routes
+const accountRoutes = require("./routes/account.routes");
 
 const app = express();
 
@@ -18,9 +19,10 @@ app.use(express.static("public"));
 // All auth routes will be prefixed with /api/auth
 // e.g. POST /api/auth/register, POST /api/auth/login
 app.use("/api/auth", authRoutes);
+app.use("/api/accounts",accountRoutes); // mount account routes
 
 // ── MongoDB Connection ───────────────────────────────────────
-const MONGO_URI = "mongodb://localhost:27017/users"; // DB name: "users"
+const MONGO_URI = "mongodb://localhost:27017/pay_sim"; // DB name: "users"
 
 mongoose
   .connect(MONGO_URI)

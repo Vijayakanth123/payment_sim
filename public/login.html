@@ -1,15 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+  <title>Login</title>
 </head>
 <body>
-    <form action="/api/auth/login" method="POST">
-        <input name="username" placeholder="Username" required>
-        <input name="password" type="password" required>
-        <button type="submit">Login</button>
-    </form>
+
+  <h2>Login</h2>
+
+  <input type="text" id="username" placeholder="Username" />
+  <br><br>
+
+  <input type="password" id="password" placeholder="Password" />
+  <br><br>
+
+  <button onclick="loginUser()">Login</button>
+
+  <br>
+  <a href="/register.html">Register</a>
+
+  <script>
+    async function loginUser() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        window.location.href = "/index.html";
+      } else {
+        alert(data.error || "Login failed");
+      }
+    }
+  </script>
+
 </body>
 </html>

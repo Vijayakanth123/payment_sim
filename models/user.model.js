@@ -10,16 +10,22 @@ const userSchema = new mongoose.Schema(
     username: {
       type: String,
       required: [true, "Username is required"],
-      unique: true,      // no two users can share a username
-      trim: true,        // strip leading/trailing whitespace automatically
-      lowercase: true,   // store all usernames in lowercase for consistency
+      unique: true,      
+      trim: true,        
+      lowercase: true,   
     },
 
     passcode_hashed: {
       type: String,
       required: [true, "Password is required"],
-      // NOTE: we never store plain-text passwords — only bcrypt hashes
     },
+
+    mobile_number:{ //need to do more about this.
+      type: String,
+      required: [true, "Mobile number is required"],
+      unique: true,
+      trim: true,
+    }
   },
   {
     timestamps: true, // auto-adds createdAt + updatedAt fields (useful for auditing)
