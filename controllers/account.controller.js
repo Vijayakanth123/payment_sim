@@ -6,6 +6,7 @@
 
 const bcrypt = require("bcrypt");
 const Account = require("../models/account.model");
+const User = require("../models/user.model");
 
 const SALT_ROUNDS = 10;
 
@@ -134,5 +135,32 @@ exports.verifyPasscode = async (req, res) => {
     return res.status(200).json({ message: "Passcode verified", verified: true });
   } catch (err) {
     return res.status(500).json({ error: "Verification failed", details: err.message });
+  }
+};
+
+
+// POST /api/accounts/secure-balance
+exports.getSecureBalance = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    // get user
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // verify password
+    const match = await bcrypt.compare(password, user.passcode_hashed);
+    if (!match) {
+      return res.status(401).json({ error: "Incorrect password" });
+    }
+
+    // fetch accounts
+    const accounts = await Account.find({ user: req.user.userId })
+      .select("-passcode_hashed");
+
+    res.json({ accounts });
+
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch balance" });
   }
 };

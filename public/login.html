@@ -1,46 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; flex-direction: column; justify-content: center; min-height: 100vh; padding-bottom: 0; }
+    .auth-wrap { padding: 32px 20px; max-width: 420px; margin: 0 auto; width: 100%; }
+    .auth-logo { text-align: center; font-size: 40px; margin-bottom: 8px; }
+    .auth-title { text-align: center; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .auth-sub   { text-align: center; font-size: 13px; color: var(--ink-muted); margin-bottom: 28px; font-family: 'JetBrains Mono', monospace; }
+    .auth-link  { text-align: center; font-size: 13px; color: var(--ink-muted); margin-top: 18px; }
+    .auth-link a { color: var(--ink); font-weight: 700; text-decoration: none; }
+  </style>
+
 </head>
 <body>
+  <div class="auth-wrap">
+    <div class="auth-logo">💳</div>
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-sub">Payment Sim</div>
 
-  <h2>Login</h2>
+    <div class="card">
+      <label class="field-label">Username</label>
+      <input class="field" type="text" id="username" placeholder="Enter username" />
+      <div style="height:12px"></div>
+      <label class="field-label">Password</label>
+      <input class="field" type="password" id="password" placeholder="Enter password" />
+      <button class="btn btn-dark btn-block" style="margin-top:18px;border-radius:12px" onclick="loginUser()">Login</button>
+      <p class="status-text error" id="loginStatus" style="text-align:center;margin-top:10px"></p>
+    </div>
 
-  <input type="text" id="username" placeholder="Username" />
-  <br><br>
-
-  <input type="password" id="password" placeholder="Password" />
-  <br><br>
-
-  <button onclick="loginUser()">Login</button>
-
-  <br>
-  <a href="/register.html">Register</a>
+    <div class="auth-link">Don't have an account? <a href="/register.html">Register</a></div>
+  </div>
 
   <script>
     async function loginUser() {
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
-
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, password })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        window.location.href = "/index.html";
-      } else {
-        alert(data.error || "Login failed");
-      }
+      const statusEl = document.getElementById("loginStatus");
+      statusEl.textContent = "";
+      try {
+        const res  = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (res.ok) { localStorage.setItem("token", data.token); window.location.href = "/index.html"; }
+        else statusEl.textContent = data.error || "Login failed";
+      } catch (err) { statusEl.textContent = "Network error"; }
     }
   </script>
-
 </body>
 </html>

@@ -1,18 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
+  <link rel="stylesheet" href="shared.css">
   <script>
     const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please login first");
-      window.location.href = "/login.html";
-    }
+    if (!token) { alert("Please login first"); window.location.href = "/login.html"; }
+    window.onload = function () { loadGroups(); };
   </script>
 </head>
 <body>
-  <h1>Welcome</h1>
 
-  <a href="/create_account.html">create Account</a>
+  <div class="page-header">
+    <h1>👋 Welcome back</h1>
+    <div class="sub">Your payment dashboard</div>
+    <div class="header-actions">
+      <button class="btn btn-white" onclick="window.location.href='/pay.html'">💸 Make Payment</button>
+      <button class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,0.25)" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="section">
+    <div class="section-label">Quick Actions</div>
+    <div class="action-grid">
+      <a class="action-tile" href="/create_group.html">
+        <span class="tile-icon">👥</span>
+        <span class="tile-label">Create Group</span>
+      </a>
+      <a class="action-tile" href="/create_account.html">
+        <span class="tile-icon">🏦</span>
+        <span class="tile-label">Add Account</span>
+      </a>
+      <a class="action-tile" href="balance.html">
+        <span class="tile-icon">💰</span>
+        <span class="tile-label">View Balance</span>
+      </a>
+      <a class="action-tile" href="/pay.html">
+        <span class="tile-icon">📤</span>
+        <span class="tile-label">Send Money</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Groups -->
+  <div class="section">
+    <div class="section-label">My Groups</div>
+    <div id="groupsList"><div class="skeleton"></div><div class="skeleton" style="height:58px"></div></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
 </body>
 </html>

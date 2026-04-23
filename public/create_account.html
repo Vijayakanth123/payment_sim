@@ -1,53 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Account</title>
+  <link rel="stylesheet" href="shared.css">
   <script>
     const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Please login first");
-      window.location.href = "/login.html";
-    }
+    if (!token) { alert("Please login first"); window.location.href = "/login.html"; }
   </script>
 </head>
 <body>
 
-  <h2>Create Account</h2> 
-  <label>Bank Name:</label>
-  <input type="text" id="bank" name="bank_name" required />
-  <br><br>
+  <div class="page-header">
+    <h2>🏦 Add Bank Account</h2>
+    <div class="sub">Link a new account to your profile</div>
+  </div>
 
-  <label>Passcode:</label>
-  <input type="password" id="passcode" name="passcode" required />
-  <br><br>
+  <div class="section">
+    <div class="card">
+      <label class="field-label">Bank Name</label>
+      <input class="field" type="text" id="bank" placeholder="e.g. HDFC, SBI, ICICI" />
+      <div style="height:14px"></div>
 
-  <button type="submit" onclick="createAccount()">Create Account</button>
+      <label class="field-label">Account Passcode</label>
+      <input class="field" type="password" id="passcode" placeholder="Set a passcode for this account" />
+      <div style="height:14px"></div>
+
+      <label class="field-label">Opening Balance (₹)</label>
+      <div class="amount-wrap">
+        <span class="currency">₹</span>
+        <input class="field" type="number" id="amount" placeholder="0.00" />
+      </div>
+
+      <button class="btn btn-dark btn-block" style="margin-top:18px;border-radius:12px" onclick="createAccount()">Create Account</button>
+      <p class="status-text" id="accStatus" style="text-align:center;margin-top:10px"></p>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="btn btn-ghost btn-block" onclick="window.history.back()">← Back</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
   <script>
+    function showToast(msg, type = "success") {
+      const t = document.getElementById("toast");
+      t.textContent = (type === "success" ? "✓  " : "✕  ") + msg;
+      t.className = "toast show";
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove("show"), 3000);
+    }
+
     async function createAccount() {
-      const token = localStorage.getItem("token");
+      const token    = localStorage.getItem("token");
       const bank_name = document.getElementById("bank").value;
-      const passcode = document.getElementById("passcode").value;
+      const passcode  = document.getElementById("passcode").value;
+      const balance   = document.getElementById("amount").value;
+      const statusEl  = document.getElementById("accStatus");
 
-      const res = await fetch("/api/accounts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({ bank_name, passcode })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert("Account created!");
-      } else {
-        alert(data.error);
+      if (!bank_name || !passcode || !balance) {
+        showToast("All fields are required", "error"); return;
       }
+
+      try {
+        const res  = await fetch("/api/accounts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+          body: JSON.stringify({ bank_name, passcode, balance })
+        });
+        const data = await res.json();
+        if (res.ok) { showToast("Account created!"); setTimeout(() => window.history.back(), 1500); }
+        else { showToast(data.error, "error"); }
+      } catch (err) { showToast("Network error", "error"); }
     }
   </script>
-
 </body>
 </html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split Expense</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .split-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .split-box {
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .split-box .sb-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-muted); text-transform: uppercase; margin-bottom: 4px; }
+    .split-box .sb-val   { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; }
+    .split-box.ok  .sb-val { color: var(--green); }
+    .split-box.bad .sb-val { color: var(--red); }
+  </style>
+  <script>
+    window.onload = function () { loadMembers(); };
+  </script>
+</head>
+<body>
+
+  <div class="page-header">
+    <h2>✂️ Split Expense</h2>
+    <div class="sub">Divide costs between group members</div>
+  </div>
+
+  <!-- Expense details -->
+  <div class="section">
+    <div class="section-label">Expense Details</div>
+    <div class="card">
+      <label class="field-label">Description</label>
+      <input class="field" id="desc" placeholder="e.g. Dinner, Hotel, Fuel" />
+      <div style="height:14px"></div>
+      <label class="field-label">Total Amount</label>
+      <div class="amount-wrap">
+        <span class="currency">₹</span>
+        <input class="field" id="amount" type="number" placeholder="0.00" oninput="updateSummary()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Members split -->
+  <div class="section">
+    <div class="section-label">Split Between</div>
+    <div class="card">
+      <!-- live summary -->
+      <div class="split-summary">
+        <div class="split-box">
+          <div class="sb-label">Total</div>
+          <div class="sb-val" id="summTotal">₹0</div>
+        </div>
+        <div class="split-box ok" id="summBox">
+          <div class="sb-label">Remaining</div>
+          <div class="sb-val" id="summRemaining">₹0</div>
+        </div>
+      </div>
+      <div id="membersBox"><div class="skeleton"></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="btn btn-red btn-block" onclick="submitExpense()">Add Expense</button>
+    <p class="status-text error" id="status" style="text-align:center;margin-top:10px"></p>
+  </div>
+
+  <div class="section">
+    <button class="btn btn-ghost btn-block" onclick="window.history.back()">← Back</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="split.js"></script>
+  <script>
+    // live summary helper (split.js calls renderMembers which sets inputs)
+    function updateSummary() {
+      const total     = parseFloat(document.getElementById("amount").value) || 0;
+      const inputs    = document.querySelectorAll(".member-share-input");
+      let   allocated = 0;
+      inputs.forEach(i => { allocated += parseFloat(i.value) || 0; });
+      const remaining = total - allocated;
+
+      document.getElementById("summTotal").textContent     = "₹" + total.toLocaleString("en-IN");
+      document.getElementById("summRemaining").textContent = "₹" + Math.abs(remaining).toLocaleString("en-IN");
+
+      const box = document.getElementById("summBox");
+      if (remaining < -0.01)      { box.className = "split-box bad"; }
+      else if (remaining < 0.01)  { box.className = "split-box ok"; }
+      else                        { box.className = "split-box"; }
+    }
+  </script>
+</body>
+</html>

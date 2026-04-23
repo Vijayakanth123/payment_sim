@@ -1,0 +1,340 @@
+/* ═══════════════════════════════════════════════════════
+   shared.css  –  Payment Sim design system
+   Same tokens as group.html / pay.html
+═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #f4f3ef;
+  --card:         #ffffff;
+  --ink:          #111210;
+  --ink-muted:    #6b6b65;
+  --ink-faint:    #b0afa8;
+  --red:          #e03c2b;
+  --red-soft:     #fdf0ee;
+  --red-border:   #f5c5be;
+  --green:        #1d9a6c;
+  --green-soft:   #edf7f3;
+  --green-border: #b6e2d3;
+  --accent:       #e8e3d8;
+  --radius:       16px;
+  --shadow-sm:    0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
+  --shadow-md:    0 4px 24px rgba(0,0,0,0.09);
+}
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* ── Page header (dark bar) ── */
+.page-header {
+  background: var(--ink);
+  color: #fff;
+  padding: 28px 24px 22px;
+}
+.page-header h1,
+.page-header h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.page-header .sub {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.header-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+/* ── Section ── */
+.section { margin: 20px 16px 0; }
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Inputs ── */
+.field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e5e3dc;
+  border-radius: 12px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.18s;
+  display: block;
+}
+.field:focus { border-color: var(--ink); }
+.field[readonly], .field:disabled {
+  background: #ece9e3;
+  color: var(--ink-muted);
+  cursor: not-allowed;
+  border-color: #dedad2;
+}
+.field + .field { margin-top: 12px; }
+
+input[type="password"].field { letter-spacing: 0.15em; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  border-radius: 40px;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s, background 0.15s;
+  letter-spacing: 0.02em;
+}
+.btn:active { transform: scale(0.96); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-dark   { background: var(--ink); color: #fff; }
+.btn-dark:hover { opacity: 0.82; }
+
+.btn-white  { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
+.btn-white:hover { opacity: 0.85; }
+
+.btn-red    { background: var(--red); color: #fff; box-shadow: 0 2px 10px rgba(224,60,43,0.28); }
+.btn-red:hover { background: #c8341f; }
+
+.btn-green  { background: var(--green); color: #fff; box-shadow: 0 2px 10px rgba(29,154,108,0.25); }
+.btn-green:hover { opacity: 0.88; }
+
+.btn-ghost  { background: transparent; color: var(--ink-muted); border: 1.5px solid #e0ddd7; }
+.btn-ghost:hover { background: var(--bg); }
+
+/* full-width block button */
+.btn-block {
+  width: 100%;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+/* ── Input row (field + button side by side) ── */
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.input-row .field { flex: 1; }
+.input-row .btn   { flex-shrink: 0; border-radius: 12px; padding: 12px 18px; }
+
+/* ── Divider ── */
+.divider { height: 1px; background: #eceae4; margin: 18px 0; }
+
+/* ── Status / feedback text ── */
+.status-text {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 8px;
+  min-height: 18px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.status-text.found { color: var(--green); }
+.status-text.error { color: var(--red); }
+
+/* ── Info / result box ── */
+.info-box {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  display: none;
+  animation: fadeSlideUp 0.25s ease both;
+}
+.info-box.show { display: block; }
+.info-box.green { background: var(--green-soft); border: 1.5px solid var(--green-border); }
+.info-box.red   { background: var(--red-soft);   border: 1.5px solid var(--red-border); }
+.info-box .r-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.info-box .r-sub  { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
+
+/* ── Amount field with ₹ prefix ── */
+.amount-wrap { position: relative; }
+.amount-wrap .currency {
+  position: absolute; left: 16px; top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700; color: var(--ink-muted);
+  font-family: 'JetBrains Mono', monospace;
+  pointer-events: none;
+}
+.amount-wrap .field { padding-left: 30px; font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; }
+
+/* ── Select ── */
+select.field { cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b65' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+/* ── Field label ── */
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ── Nav / quick-action grid ── */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.action-tile {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.action-tile:hover { border-color: var(--accent); box-shadow: var(--shadow-md); }
+.action-tile .tile-icon { font-size: 28px; }
+.action-tile .tile-label { font-weight: 700; font-size: 13px; }
+
+/* ── Group card ── */
+.group-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1.5px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  cursor: pointer;
+  animation: fadeSlideUp 0.35s ease both;
+}
+.group-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); }
+.group-card .gc-avatar {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--ink); color: #fff;
+  font-weight: 800; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.group-card .gc-name  { font-weight: 700; font-size: 15px; margin-bottom: 3px; }
+.group-card .gc-meta  { font-size: 12px; color: var(--ink-muted); }
+.group-card .gc-arrow { margin-left: auto; color: var(--ink-faint); font-size: 18px; }
+
+/* ── Account / balance card ── */
+.account-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--green);
+  animation: fadeSlideUp 0.3s ease both;
+}
+.account-card + .account-card { margin-top: 10px; }
+.account-card .bank-name  { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.account-card .acc-number { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-muted); margin-bottom: 8px; }
+.account-card .balance    { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--green); }
+
+/* ── Member / participant row ── */
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eceae4;
+}
+.member-row:last-child { border-bottom: none; }
+.member-row .avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: #fff;
+  flex-shrink: 0;
+}
+.member-row .m-name { font-weight: 600; font-size: 14px; flex: 1; }
+.member-row .m-input { width: 110px; text-align: right; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: #fff;
+  padding: 12px 22px; border-radius: 40px;
+  font-size: 13px; font-weight: 600;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  white-space: nowrap; z-index: 1000;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Empty / loading state ── */
+.state-box {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 40px 20px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.state-box .icon { font-size: 36px; margin-bottom: 12px; }
+.state-box p { color: var(--ink-muted); font-size: 14px; }
+
+.skeleton {
+  background: linear-gradient(90deg,#e8e6e0 25%,#f0ede7 50%,#e8e6e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 10px;
+  height: 72px;
+}
+.skeleton + .skeleton { margin-top: 10px; }
+
+/* ── Animations ── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}

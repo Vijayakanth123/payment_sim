@@ -1,56 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; flex-direction: column; justify-content: center; min-height: 100vh; padding-bottom: 0; }
+    .auth-wrap  { padding: 32px 20px; max-width: 420px; margin: 0 auto; width: 100%; }
+    .auth-logo  { text-align: center; font-size: 40px; margin-bottom: 8px; }
+    .auth-title { text-align: center; font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .auth-sub   { text-align: center; font-size: 13px; color: var(--ink-muted); margin-bottom: 28px; font-family: 'JetBrains Mono', monospace; }
+    .auth-link  { text-align: center; font-size: 13px; color: var(--ink-muted); margin-top: 18px; }
+    .auth-link a { color: var(--ink); font-weight: 700; text-decoration: none; }
+  </style>
+
 </head>
 <body>
-  <h2>Register</h2>
+  <div class="auth-wrap">
+    <div class="auth-logo">🪪</div>
+    <div class="auth-title">Create account</div>
+    <div class="auth-sub">Payment Sim</div>
 
-  <input type="text" id="username" placeholder="Username" />
-  <br><br>
+    <div class="card">
+      <label class="field-label">Username</label>
+      <input class="field" type="text" id="username" placeholder="Choose a username" />
+      <div style="height:12px"></div>
+      <label class="field-label">Password</label>
+      <input class="field" type="password" id="password" placeholder="Choose a password" />
+      <div style="height:12px"></div>
+      <label class="field-label">Mobile Number</label>
+      <input class="field" type="text" id="mobile" placeholder="10-digit mobile number" />
+      <button class="btn btn-dark btn-block" style="margin-top:18px;border-radius:12px" onclick="registerUser()">Create Account</button>
+      <p class="status-text error" id="regStatus" style="text-align:center;margin-top:10px"></p>
+    </div>
 
-  <input type="password" id="password" placeholder="Password" />
-  <br><br>
-
-  <input type="text" id="mobile" placeholder="Mobile Number" />
-  <br><br>
-
-  <button onclick="registerUser()">Register</button>
+    <div class="auth-link">Already have an account? <a href="/login.html">Login</a></div>
+  </div>
 
   <script>
     async function registerUser() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+      const username     = document.getElementById("username").value;
+      const password     = document.getElementById("password").value;
       const mobile_number = document.getElementById("mobile").value;
-
-      console.log({
-        username,
-        password,
-        mobile_number
-    });
-
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          mobile_number
-        })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert("Registration successful!");
-        window.location.href = "/login.html";
-      } else {
-        alert(data.error || "Registration failed");
-      }
+      const statusEl     = document.getElementById("regStatus");
+      statusEl.textContent = "";
+      try {
+        const res  = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password, mobile_number })
+        });
+        const data = await res.json();
+        if (res.ok) { alert("Registration successful!"); window.location.href = "/login.html"; }
+        else statusEl.textContent = data.error || "Registration failed";
+      } catch (err) { statusEl.textContent = "Network error"; }
     }
   </script>
-
 </body>
 </html>

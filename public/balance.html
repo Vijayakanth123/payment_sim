@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Balance</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+  <div class="page-header">
+    <h2>💰 View Balance</h2>
+    <div class="sub">Enter your password to reveal account balances</div>
+  </div>
+
+  <div class="section">
+    <div class="card">
+      <label class="field-label">Password</label>
+      <input class="field" id="password" type="password" placeholder="Enter your password" />
+      <button class="btn btn-dark btn-block" style="margin-top:14px" onclick="loadBalance()">Unlock Balances</button>
+      <p class="status-text" id="status"></p>
+    </div>
+  </div>
+
+  <div class="section" id="balanceSection" style="display:none">
+    <div class="section-label">Your Accounts</div>
+    <div id="balanceBox"></div>
+  </div>
+
+  <div class="section">
+    <button class="btn btn-ghost btn-block" onclick="goBack()">← Back</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="balance.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

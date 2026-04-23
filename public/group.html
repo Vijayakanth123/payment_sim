@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f3ef;
+      --card: #ffffff;
+      --ink: #111210;
+      --ink-muted: #6b6b65;
+      --ink-faint: #b0afa8;
+      --red: #e03c2b;
+      --red-soft: #fdf0ee;
+      --red-border: #f5c5be;
+      --green: #1d9a6c;
+      --green-soft: #edf7f3;
+      --green-border: #b6e2d3;
+      --accent: #e8e3d8;
+      --radius: 16px;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 24px rgba(0,0,0,0.09);
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      background: var(--ink);
+      color: #fff;
+      padding: 28px 24px 22px;
+      position: relative;
+    }
+    .page-header h2 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .page-header .group-meta {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .btn-primary {
+      background: #fff;
+      color: var(--ink);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+
+    /* ── Section wrapper ── */
+    .section {
+      margin: 24px 16px 0;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* ── Group details card ── */
+    #groupDetails {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    #groupDetails h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    #groupDetails p {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Summary strip ── */
+    .summary-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .summary-box {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+    .summary-box .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .summary-box .amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .summary-box.owe .amount { color: var(--red); }
+    .summary-box.owed .amount { color: var(--green); }
+
+    /* ── Balance cards ── */
+    .balance-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .balance-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      animation: fadeSlideUp 0.35s ease both;
+    }
+    .balance-card.i-owe {
+      border-color: var(--red-border);
+      background: linear-gradient(135deg, #fff 70%, var(--red-soft));
+    }
+    .balance-card.owes-me {
+      border-color: var(--green-border);
+      background: linear-gradient(135deg, #fff 70%, var(--green-soft));
+    }
+    .balance-card:hover { box-shadow: var(--shadow-md); }
+
+    /* avatar */
+    .avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px; color: #fff;
+      flex-shrink: 0;
+      letter-spacing: 0.03em;
+    }
+
+    .card-info { flex: 1; min-width: 0; }
+    .card-info .name {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-info .direction-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 2px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .i-owe .direction-tag { background: var(--red-soft); color: var(--red); }
+    .owes-me .direction-tag { background: var(--green-soft); color: var(--green); }
+
+    .card-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .card-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 17px;
+    }
+    .i-owe .card-amount { color: var(--red); }
+    .owes-me .card-amount { color: var(--green); }
+
+    /* settle button */
+    .btn-settle {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(224,60,43,0.30);
+    }
+    .btn-settle:hover { background: #c8341f; }
+    .btn-settle:active { transform: scale(0.95); }
+    .btn-settle:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+
+    /* ── Empty / loading states ── */
+    .state-box {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 40px 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .state-box .icon { font-size: 36px; margin-bottom: 12px; }
+    .state-box p { color: var(--ink-muted); font-size: 14px; }
+
+    /* skeleton pulse */
+    .skeleton {
+      background: linear-gradient(90deg, #e8e6e0 25%, #f0ede7 50%, #e8e6e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 10px;
+      height: 72px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,10,8,0.55);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px 28px 28px;
+      max-width: 340px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.2s;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+    .modal-box .modal-icon { font-size: 44px; margin-bottom: 14px; }
+    .modal-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .modal-box p { font-size: 14px; color: var(--ink-muted); line-height: 1.65; margin-bottom: 26px; }
+    .modal-box p strong { color: var(--ink); }
+    .modal-actions { display: flex; gap: 10px; }
+    .btn-cancel {
+      flex: 1; padding: 12px;
+      border: 1.5px solid #e0ddd7;
+      border-radius: 12px;
+      background: #fff; color: var(--ink-muted);
+      font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-cancel:hover { background: var(--bg); }
+    .btn-confirm {
+      flex: 1; padding: 12px;
+      border: none; border-radius: 12px;
+      background: var(--red); color: #fff;
+      font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(224,60,43,0.3);
+      transition: background 0.15s;
+    }
+    .btn-confirm:hover { background: #c8341f; }
+    .btn-confirm:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--ink); color: #fff;
+      padding: 12px 22px; border-radius: 40px;
+      font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success::before { content: "✓  "; }
+    .toast.error::before { content: "✕  "; color: #f87171; }
+
+    /* ── Animations ── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h2 id="headerGroupName">Loading group…</h2>
+    <div class="group-meta" id="headerMeta">—</div>
+    <div class="header-actions">
+      <button class="btn-primary" onclick="goToSplit()">＋ Split Expense</button>
+    </div>
+  </div>
+
+  <!-- Group details -->
+  <div class="section">
+    <div class="section-label">Group Info</div>
+    <div id="groupDetails"><div class="skeleton"></div></div>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="section">
+    <div class="summary-strip">
+      <div class="summary-box owe">
+        <div class="label">You Owe</div>
+        <div class="amount" id="totalOwe">₹0</div>
+      </div>
+      <div class="summary-box owed">
+        <div class="label">Owed to You</div>
+        <div class="amount" id="totalOwed">₹0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Balances -->
+  <div class="section">
+    <div class="section-label">Settlements</div>
+    <div class="balance-list" id="balanceList">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton" style="height:58px"></div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-icon">💸</div>
+      <h3>Confirm Settlement</h3>
+      <p id="modalText">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-confirm" id="modalConfirmBtn" onclick="confirmSettle()">Yes, Settle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="group.js"></script>
+</body>
+</html>

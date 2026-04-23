@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Group</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+  <div class="page-header">
+    <h2>👥 Create Group</h2>
+    <div class="sub">Split expenses with friends</div>
+  </div>
+
+  <!-- Group name -->
+  <div class="section">
+    <div class="section-label">Group Details</div>
+    <div class="card">
+      <label class="field-label">Group Name</label>
+      <input class="field" id="groupName" placeholder="e.g. Goa Trip, Flat Expenses" />
+    </div>
+  </div>
+
+  <!-- Search & add participants -->
+  <div class="section">
+    <div class="section-label">Add Participants</div>
+    <div class="card">
+      <div class="input-row">
+        <input class="field" id="searchUser" placeholder="Username or mobile" />
+        <button class="btn btn-dark" onclick="searchUser()">Search</button>
+      </div>
+      <p class="status-text" id="searchStatus"></p>
+      <div class="info-box green" id="searchResult"></div>
+    </div>
+  </div>
+
+  <!-- Participant list -->
+  <div class="section">
+    <div class="section-label">Participants</div>
+    <div class="card" id="participantCard" style="display:none">
+      <ul id="participantList" style="list-style:none;padding:0;margin:0"></ul>
+    </div>
+    <div class="state-box" id="emptyParticipants">
+      <div class="icon">🔍</div>
+      <p>Search and add participants above</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="btn btn-red btn-block" onclick="createGroup()">Create Group</button>
+  </div>
+
+  <div class="section">
+    <button class="btn btn-ghost btn-block" onclick="window.history.back()">← Back</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="group.js"></script>
+  <script>
+    // override renderParticipants to use new styles
+    function renderParticipants() {
+      const list  = document.getElementById("participantList");
+      const card  = document.getElementById("participantCard");
+      const empty = document.getElementById("emptyParticipants");
+      list.innerHTML = "";
+
+      if (selectedUsers.length === 0) {
+        card.style.display  = "none";
+        empty.style.display = "block";
+        return;
+      }
+      card.style.display  = "block";
+      empty.style.display = "none";
+
+      selectedUsers.forEach(user => {
+        const hue = [...user.username].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+        const ini = user.username.slice(0, 2).toUpperCase();
+        const li  = document.createElement("li");
+        li.className = "member-row";
+        li.innerHTML = `
+          <div class="avatar" style="background:hsl(${hue},52%,48%)">${ini}</div>
+          <span class="m-name">${user.username}</span>
+          <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;border-radius:20px" onclick="removeParticipant('${user._id}')">Remove</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    // style search result display
+    const _origSearch = searchUser;
+    // override status display after search
+    function patchSearchStatus(found, user) {
+      const box = document.getElementById("searchResult");
+      const st  = document.getElementById("searchStatus");
+      if (found) {
+        box.innerHTML = `<div class="r-name">${user.username}</div><div class="r-sub">${user.mobile_number}</div>
+          <button class="btn btn-green" style="margin-top:10px;padding:8px 18px;border-radius:20px;font-size:12px" onclick="addParticipant()">＋ Add</button>`;
+        box.classList.add("show");
+        st.className = "status-text found"; st.textContent = "✓ User found";
+      } else {
+        box.classList.remove("show");
+      }
+    }
+  </script>
+</body>
+</html>

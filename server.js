@@ -7,6 +7,10 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth.routes"); // import auth routes
 const accountRoutes = require("./routes/account.routes");
+const transactionRoutes = require("./routes/transaction.routes");
+const userRoutes = require("./routes/user.routes");
+const groupRoutes = require("./routes/group.routes");
+const expenseRoutes = require("./routes/expense.routes");
 
 const app = express();
 
@@ -20,7 +24,10 @@ app.use(express.static("public"));
 // e.g. POST /api/auth/register, POST /api/auth/login
 app.use("/api/auth", authRoutes);
 app.use("/api/accounts",accountRoutes); // mount account routes
-
+app.use("/api/transactions",transactionRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/expenses", expenseRoutes);
 // ── MongoDB Connection ───────────────────────────────────────
 const MONGO_URI = "mongodb://localhost:27017/pay_sim"; // DB name: "users"
 

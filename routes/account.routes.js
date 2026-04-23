@@ -19,7 +19,21 @@ const {
   getAccountById,
   deleteAccount,
   verifyPasscode,
+  getSecureBalance,
 } = require("../controllers/account.controller");
+
+const Account = require("../models/account.model");
+
+router.get("/my-accounts", verifyToken, async (req, res) => {
+  try {
+    const accounts = await Account.find({ user: req.user.userId })
+      .select("-passcode_hashed");
+
+    res.json({ accounts });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch accounts" });
+  }
+});
 
 // Every account route requires a valid JWT
 router.use(verifyToken);
@@ -38,5 +52,7 @@ router.delete("/:id",    accountIdRules,        handleValidationErrors, deleteAc
 
 // POST   /api/accounts/:id/verify-passcode — verify passcode before sensitive actions
 router.post(  "/:id/verify-passcode", verifyPasscodeRules, handleValidationErrors, verifyPasscode);
+
+router.post("/secure-balance", verifyToken, getSecureBalance);
 
 module.exports = router;
