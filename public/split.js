@@ -27,7 +27,7 @@ async function loadMembers() {
 
     div.innerHTML = `
       <label>${m.username}</label>
-      <input type="number" id="share-${m._id}" placeholder="0" />
+      <input type="number" class="field" id="share-${m._id}" placeholder="0" />
     `;
 
     box.appendChild(div);

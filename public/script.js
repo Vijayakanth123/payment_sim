@@ -344,7 +344,7 @@ async function loadGroups() {
       div.innerHTML = `
         <h3>${group.name}</h3>
         <p>Members: ${group.members.map(m => m.username).join(", ")}</p>
-        <button onclick="openGroup('${group._id}')">Enter Group</button><hr>
+        <button class="btn btn-primary" onclick="openGroup('${group._id}')">Enter Group</button><hr>
       `;
       container.appendChild(div);
     });

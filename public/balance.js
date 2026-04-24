@@ -1,11 +1,21 @@
 async function loadBalance() {
-  const password = document.getElementById("password").value;
-  const status = document.getElementById("status");
+  const password  = document.getElementById("password").value;
+  const statusEl  = document.getElementById("status");
+  const section   = document.getElementById("balanceSection");
+  const box       = document.getElementById("balanceBox");
 
-  status.innerText = "Verifying...";
+  if (!password) {
+    statusEl.className   = "status-text error";
+    statusEl.textContent = "Please enter your password";
+    return;
+  }
+
+  statusEl.className   = "status-text";
+  statusEl.textContent = "Verifying…";
+  section.style.display = "none";
 
   try {
-    const res = await fetch("/api/accounts/secure-balance", {
+    const res  = await fetch("/api/accounts/secure-balance", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,25 +27,36 @@ async function loadBalance() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
 
-    const box = document.getElementById("balanceBox");
+    // ── show the section ──────────────────────────────────────────────
+    section.style.display = "block";
     box.innerHTML = "";
 
-    data.accounts.forEach(acc => {
-      const div = document.createElement("div");
+    if (!data.accounts || data.accounts.length === 0) {
+      box.innerHTML = `
+        <div class="state-box">
+          <div class="icon">🏦</div>
+          <p>No accounts found</p>
+        </div>`;
+    } else {
+      data.accounts.forEach((acc, i) => {
+        const div = document.createElement("div");
+        div.className = "account-card";
+        div.style.animationDelay = `${i * 80}ms`;
+        div.innerHTML = `
+          <div class="bank-name">${acc.bank_name}</div>
+          <div class="acc-number">Account: ${acc.account_number}</div>
+          <div class="balance">₹${parseFloat(acc.balance).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</div>
+        `;
+        box.appendChild(div);
+      });
+    }
 
-      div.innerHTML = `
-        <p><b>${acc.bank_name}</b></p>
-        <p>Account: ${acc.account_number}</p>
-        <p>Balance: ₹${acc.balance}</p>
-        <hr>
-      `;
-
-      box.appendChild(div);
-    });
-
-    status.innerText = "Success";
+    statusEl.className   = "status-text found";
+    statusEl.textContent = "✓ Verified";
 
   } catch (err) {
-    status.innerText = err.message;
+    section.style.display = "none";
+    statusEl.className    = "status-text error";
+    statusEl.textContent  = err.message;
   }
 }

@@ -57,51 +57,84 @@
 
   <div class="toast" id="toast"></div>
   <script src="group.js"></script>
-  <script>
-    // override renderParticipants to use new styles
-    function renderParticipants() {
-      const list  = document.getElementById("participantList");
-      const card  = document.getElementById("participantCard");
-      const empty = document.getElementById("emptyParticipants");
-      list.innerHTML = "";
+  <script src="group.js"></script>
+<script>
+  // Override searchUser from group.js to use styled UI
+  async function searchUser() {
+    const identifier = document.getElementById("searchUser").value;
+    const statusEl   = document.getElementById("searchStatus");
+    const box        = document.getElementById("searchResult");
 
-      if (selectedUsers.length === 0) {
-        card.style.display  = "none";
-        empty.style.display = "block";
-        return;
-      }
-      card.style.display  = "block";
-      empty.style.display = "none";
+    statusEl.className   = "status-text";
+    statusEl.textContent = "Searching…";
+    box.classList.remove("show");
 
-      selectedUsers.forEach(user => {
-        const hue = [...user.username].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
-        const ini = user.username.slice(0, 2).toUpperCase();
-        const li  = document.createElement("li");
-        li.className = "member-row";
-        li.innerHTML = `
-          <div class="avatar" style="background:hsl(${hue},52%,48%)">${ini}</div>
-          <span class="m-name">${user.username}</span>
-          <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;border-radius:20px" onclick="removeParticipant('${user._id}')">Remove</button>
-        `;
-        list.appendChild(li);
+    try {
+      const res  = await fetch("/api/users/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify({ identifier })
       });
-    }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
 
-    // style search result display
-    const _origSearch = searchUser;
-    // override status display after search
-    function patchSearchStatus(found, user) {
-      const box = document.getElementById("searchResult");
-      const st  = document.getElementById("searchStatus");
-      if (found) {
-        box.innerHTML = `<div class="r-name">${user.username}</div><div class="r-sub">${user.mobile_number}</div>
-          <button class="btn btn-green" style="margin-top:10px;padding:8px 18px;border-radius:20px;font-size:12px" onclick="addParticipant()">＋ Add</button>`;
-        box.classList.add("show");
-        st.className = "status-text found"; st.textContent = "✓ User found";
-      } else {
-        box.classList.remove("show");
-      }
+      lastFoundUser = data.user;
+
+      const hue = [...data.user.username].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+      const ini = data.user.username.slice(0, 2).toUpperCase();
+
+      box.innerHTML = `
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="avatar" style="background:hsl(${hue},52%,48%);width:38px;height:38px;font-size:14px">${ini}</div>
+          <div>
+            <div class="r-name">${data.user.username}</div>
+            <div class="r-sub">${data.user.mobile_number}</div>
+          </div>
+          <button class="btn btn-green" style="margin-left:auto;padding:8px 18px;border-radius:20px;font-size:12px" onclick="addParticipant()">＋ Add</button>
+        </div>
+      `;
+      box.classList.add("show");
+      statusEl.className   = "status-text found";
+      statusEl.textContent = "✓ User found";
+    } catch (err) {
+      lastFoundUser = null;
+      box.classList.remove("show");
+      statusEl.className   = "status-text error";
+      statusEl.textContent = err.message;
     }
-  </script>
+  }
+
+  // Override renderParticipants to use styled rows
+  function renderParticipants() {
+    const list  = document.getElementById("participantList");
+    const card  = document.getElementById("participantCard");
+    const empty = document.getElementById("emptyParticipants");
+    list.innerHTML = "";
+
+    if (selectedUsers.length === 0) {
+      card.style.display  = "none";
+      empty.style.display = "block";
+      return;
+    }
+    card.style.display  = "block";
+    empty.style.display = "none";
+
+    selectedUsers.forEach(user => {
+      const hue = [...user.username].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+      const ini = user.username.slice(0, 2).toUpperCase();
+      const li  = document.createElement("li");
+      li.className = "member-row";
+      li.innerHTML = `
+        <div class="avatar" style="background:hsl(${hue},52%,48%)">${ini}</div>
+        <span class="m-name">${user.username}</span>
+        <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;border-radius:20px" onclick="removeParticipant('${user._id}')">Remove</button>
+      `;
+      list.appendChild(li);
+    });
+  }
+</script>
 </body>
 </html>
